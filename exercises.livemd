@@ -75,65 +75,32 @@ end
 6 = Recursive.sum(3)
 ```
 
-## Wordle
+## Pipe operator - Scrabble Score
 
-Wordle is such a simple game that there are hardly any rules. But here you go:
+Given a word, compute the Scrabble score of that word.
 
-* You have to guess the Wordle in six goes or less
-* Every word you enter must be in the word list.
-* A correct letter turns green.
-* A correct letter in the wrong place turns yellow*.
-* An incorrect letter turns gray.
-* Letters can be used more than once.
-* Word consists of 5 letters.
+### Letter Values
 
-Rules taken form [here](https://www.tomsguide.com/news/what-is-wordle).
+| Letter                       | Value |
+| ---------------------------- | ----- |
+| A, E, I, O, U, L, N, R, S, T | 1     |
+| D, G                         | 2     |
+| B, C, M, P                   | 3     |
+| F, H, V, W, Y                | 4     |
+| K                            | 5     |
+| J, X                         | 8     |
+| Q, Z                         | 10    |
 
-Implement a function that takes two 5 letters words (the one that needs to be guessed and your guess) and returnes a list of colors for each letter.
+Tip: You can calculate score for each group in separate function and pipe them together
 
 ```elixir
-defmodule Wordle do
-  def color_word(actuall, guess) do
-    [:gray, :gray, :gray, :gray, :gray]
-    # TODO finish implementation
+defmodule Scrabble do
+  def calculate_score(word) do
+    # Your code here
   end
 end
 ```
 
-Implement remaining test cases
-
 ```elixir
-ExUnit.start(autorun: false)
-
-defmodule Wordle.Test do
-  use ExUnit.Case, async: false
-
-  test "none of the latters match" do
-    expected = 1..5 |> Enum.to_list() |> Enum.map(fn _ -> :gray end)
-    assert expected == Wordle.color_word("abcde", "fghij")
-  end
-
-  # test "all of the latters match" do
-  # end
-
-  # test "a letter is in different place" do
-  # end
-
-  # test "a letter is passed 2 times but exists once in a word both in different place" do
-  # end
-
-  # test "a letter is passed 3 times but exists once in a word both in different place" do
-  # end
-
-  # test "a letter is passed 2 times but exists once in a word and one is in the right place" do
-  # end
-
-  # test "a letter is passed 3 times but exists once in a word and one is in the right place" do
-  # end
-
-  # test "2 green, 1 yellow" do
-  # end
-end
-
-ExUnit.run()
+14 = Scrabble.calculate_score("cabbage")
 ```
