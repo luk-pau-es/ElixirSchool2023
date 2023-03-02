@@ -1,7 +1,0 @@
-# Exercises
-
-## Section
-
-```elixir
-
-```
