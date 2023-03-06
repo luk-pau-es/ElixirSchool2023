@@ -26,7 +26,7 @@ x
 reason
 ```
 
-## If
+## If / unless
 
 ```elixir
 if true do

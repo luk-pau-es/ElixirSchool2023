@@ -23,6 +23,15 @@ Notes: Integers automatically expand memory they take to accomodate values (e.g.
 
 Arithmetic operations work as in most programming languages (+, -, *, /, div/2, rem/2)
 
+```elixir
+# binary notation
+0b1010
+# octal notation
+0o777
+# hexadecimal notation
+0x1F
+```
+
 ## Atoms
 
 An atom is a constant whose value is its own name.
@@ -73,6 +82,7 @@ a = :world
 "hello #{a}"
 IO.puts("hello\nworld")
 is_binary("hello")
+"hello" <> " " <> "world"
 ```
 
 ## Tuples
