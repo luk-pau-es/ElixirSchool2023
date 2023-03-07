@@ -24,6 +24,15 @@ Notes: Integers automatically expand memory they take to accomodate values (e.g.
 Arithmetic operations work as in most programming languages (+, -, *, /, div/2, rem/2)
 
 ```elixir
+1
++2
+-3
+1_000_000_000
+
+12.345
+-2.71
+3.14e-10
+123_456.789_1011e23
 # binary notation
 0b1010
 # octal notation
