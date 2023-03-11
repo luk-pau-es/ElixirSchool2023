@@ -12,8 +12,30 @@ Tip: see [How to use div/2 and/or rem/2?](https://elixir-lang.org/getting-starte
 
 ```elixir
 defmodule FizzBuzz do
+  def fizzbuzz(0), do: []
+
   def fizzbuzz(n) do
-    []
+    output = ""
+
+    output =
+      if rem(n, 3) == 0 do
+        output <> "fizz"
+      else
+        output
+      end
+
+    output =
+      if rem(n, 5) == 0 do
+        output <> "buzz"
+      else
+        output
+      end
+
+    unless output == "" do
+      fizzbuzz(n - 1) ++ [:"#{output}"]
+    else
+      fizzbuzz(n - 1) ++ [n]
+    end
   end
 end
 ```
@@ -65,9 +87,8 @@ Write functions `sum(n)` that uses recursion to calculate the sum of integers fr
 
 ```elixir
 defmodule Recursive do
-  def sum(n) do
-    # Your code here
-  end
+  def sum(0), do: 0
+  def sum(n), do: n + sum(n - 1)
 end
 ```
 
@@ -95,8 +116,24 @@ Tip: You can calculate score for each group in separate function and pipe them t
 
 ```elixir
 defmodule Scrabble do
+  defp get_letter_value(letter) do
+    cond do
+      "AEIOULNRST" =~ letter -> 1
+      "DG" =~ letter -> 2
+      "BCMP" =~ letter -> 3
+      "FHVWY" =~ letter -> 4
+      "K" =~ letter -> 5
+      "JX" =~ letter -> 8
+      "QZ" =~ letter -> 10
+    end
+  end
+
   def calculate_score(word) do
-    # Your code here
+    word
+    |> String.upcase()
+    |> String.graphemes()
+    |> Enum.map(fn x -> get_letter_value(x) end)
+    |> Enum.sum()
   end
 end
 ```
