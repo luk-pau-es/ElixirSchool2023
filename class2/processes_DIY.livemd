@@ -67,47 +67,47 @@ Hint 3 - think about possible race condition that may occure in your system.
 
 ```elixir
 defmodule Counter do
-  def counter() do
-    counter(0)
-  end
-
-  def counter(count) do
-    Process.register(self(), CounterProcess)
-
+  defp counter_recursive(count) do
     receive do
       :increment ->
-        Process.unregister(CounterProcess)
-        counter(count + 1)
+        counter_recursive(count + 1)
 
       :decrement ->
-        Process.unregister(CounterProcess)
-        counter(count - 1)
+        counter_recursive(count - 1)
 
       {:increment, number} ->
-        Process.unregister(CounterProcess)
-        counter(count + number)
+        counter_recursive(count + number)
 
       {:decrement, number} ->
-        Process.unregister(CounterProcess)
-        counter(count - number)
+        counter_recursive(count - number)
 
       {:retrive, pid} ->
         send(pid, count)
-        Process.unregister(CounterProcess)
-        counter(count)
+        counter_recursive(count)
 
       :stop ->
-        Process.unregister(CounterProcess)
         :ok
 
-      :crash ->
-        Process.unregister(CounterProcess)
-        :error
+      :throw ->
+        throw(1)
+
+      :exit ->
+        exit(1)
+
+      :error_internal ->
+        1 = 2
 
       _ ->
-        Process.unregister(CounterProcess)
-        counter(count)
+        counter_recursive(count)
     end
+  end
+
+  def counter(), do: counter(0)
+
+  def counter(count) do
+    Process.register(self(), CounterProcess)
+    counter_recursive(count)
+    Process.unregister(CounterProcess)
   end
 end
 ```
@@ -117,12 +117,11 @@ spawn(Counter, :counter, [0])
 ```
 
 ```elixir
-Task.start(fn -> send(CounterProcess, :increment) end)
-Task.start(fn -> send(CounterProcess, :increment) end)
-Task.start(fn -> send(CounterProcess, :increment) end)
-Task.start(fn -> send(CounterProcess, :decrement) end)
-Task.start(fn -> send(CounterProcess, :decrement) end)
-Task.start(fn -> send(CounterProcess, :decrement) end)
+for _ <- Enum.to_list(1..1_000) do
+  send(CounterProcess, :increment)
+end
+
+send(CounterProcess, :decrement)
 
 send(CounterProcess, {:retrive, self()})
 
@@ -147,26 +146,26 @@ Hint 1 - use monitor or link with setting process flag `trap_exit`.
 
 ```elixir
 defmodule Warden do
-  def warden_process do
-    Process.monitor(CounterProcess)
+  def warden_process(process_name, {module_name, function_name, function_arguments}) do
+    Process.monitor(process_name)
 
     receive do
       msg ->
         IO.inspect(msg, label: "The trap exit messge")
-        spawn(Counter, :counter, [])
+        spawn(module_name, function_name, function_arguments)
     end
 
-    warden_process()
+    warden_process(process_name, {module_name, function_name, function_arguments})
   end
 end
 ```
 
 ```elixir
-spawn(Warden, :warden_process, [])
+spawn(Warden, :warden_process, [CounterProcess, {Counter, :counter, []}])
 ```
 
 ```elixir
-send(CounterProcess, :crash)
+send(CounterProcess, :error_internal)
 ```
 
 ```elixir
