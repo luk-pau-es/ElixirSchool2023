@@ -204,6 +204,14 @@ penny =
     send(bernadete, gossip)
   end)
 
+[
+  {:lenard, lenard},
+  {:raj, raj},
+  {:howard, howard},
+  {:penny, penny},
+  {:bernadete, bernadete}
+] |> IO.inspect()
+
 ## Tracing (like debugging but better)
 :dbg.tracer(:process, {&:dbg.dhandler/2, :standard_io})
 
