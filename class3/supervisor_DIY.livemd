@@ -14,23 +14,23 @@ defmodule ShopInventory do
 
   # Client API
   def create_item(item) do
-    # Your code here
+    GenServer.cast(ShopInventory, {:create, item})
   end
 
   def list_items() do
-    # Your code here
+    GenServer.call(ShopInventory, :get)
   end
 
-  def delete_item() do
-    # Your code here
+  def delete_item(item) do
+    GenServer.cast(ShopInventory, {:delete, item})
   end
 
   def get_item_by_name(name) do
-    # Your code here
+    GenServer.call(ShopInventory, {:get, name})
   end
 
   def start_link(_opts) do
-    GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
+    GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 
   # Server API
@@ -38,8 +38,28 @@ defmodule ShopInventory do
     {:ok, state}
   end
 
+  def handle_call(:get, _from, state) do
+    {:reply, state, state}
+  end
+
+  def handle_call({:get, name}, _from, state) do
+    reply =
+      state
+      |> Enum.find(fn x -> x[:name] == name end)
+
+    {:reply, reply, state}
+  end
+
   def handle_call(_, _, state) do
-    {:reply, _, state}
+    {:reply, :not_ok, state}
+  end
+
+  def handle_cast({:create, item}, state) do
+    {:noreply, [item | state]}
+  end
+
+  def handle_cast({:delete, item}, state) do
+    {:noreply, List.delete(state, item)}
   end
 
   def handle_cast(_, state) do
@@ -51,6 +71,25 @@ end
 ## Supervisor - Shop Supervisor
 
 Using Shop Inventory GenServer from previous exercise implement Supervisor module with 3 different shop inventories.
+
+```elixir
+product_1 = %{name: "Milk", price: 4}
+product_2 = %{name: "Bread", price: 6}
+product_3 = %{name: "Ham", price: 20}
+
+{:ok, pid} = ShopInventory.start_link(:ok)
+
+ShopInventory.create_item(product_1)
+ShopInventory.create_item(product_2)
+ShopInventory.create_item(product_3)
+
+ShopInventory.list_items() |> IO.inspect()
+ShopInventory.get_item_by_name("Milk") |> IO.inspect()
+
+ShopInventory.delete_item(product_2)
+
+ShopInventory.list_items() |> IO.inspect()
+```
 
 ## Shop Inventory - Advanced
 
